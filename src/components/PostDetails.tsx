@@ -2,30 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
-import { Comment } from '../types/Comment';
 import * as services from '../api';
+import { Comment } from '../types/Comment';
 
 type Props = {
   post: Post;
 };
 
 export const PostDetails: React.FC<Props> = ({ post }) => {
-  const [isProcessed, setisProcessed] = useState(true);
+  const [isCommentsLoading, setisCommentsLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [isFormVisible, setIsFromVosoble] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [error, setError] = useState('');
   const { title, id: postId, body } = post;
 
   useEffect(() => {
-    setisProcessed(true);
-    setIsFromVosoble(false);
+    setisCommentsLoading(true);
+    setIsFormVisible(false);
 
     services
       .getComments(postId)
       .then(setComments)
       .catch(() => setError('Something went wrong'))
       .finally(() => {
-        setisProcessed(false);
+        setisCommentsLoading(false);
       });
   }, [postId]);
 
@@ -35,8 +35,8 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   }
 
   async function handleCreateComment(newComment: Comment) {
-    return services.createNewComment(newComment).finally(() => {
-      setComments(prev => [...prev, newComment]);
+    return services.createNewComment(newComment).then((data: Comment) => {
+      setComments(prev => [...prev, data]);
     });
   }
 
@@ -49,7 +49,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       </div>
 
       <div className="block">
-        {isProcessed ? (
+        {isCommentsLoading ? (
           <Loader />
         ) : (
           <>
@@ -59,13 +59,12 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
               </div>
             ) : null}
 
-            {comments.length === 0 && !error && (
+            {(comments.length === 0 && !error && (
               <p className="title is-4" data-cy="NoCommentsMessage">
                 No comments yet
               </p>
-            )}
+            )) || <p className="title is-4">Comments:</p>}
 
-            <p className="title is-4">Comments:</p>
             {comments.map(comment => (
               <article
                 key={comment.id}
@@ -82,9 +81,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
                     className="delete is-small"
                     aria-label="delete"
                     onClick={() => handleDeleteComment(comment.id)}
-                  >
-                    delete button
-                  </button>
+                  />
                 </div>
 
                 <div className="message-body" data-cy="CommentBody">
@@ -98,7 +95,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
                 data-cy="WriteCommentButton"
                 type="button"
                 className="button is-link"
-                onClick={() => setIsFromVosoble(true)}
+                onClick={() => setIsFormVisible(true)}
               >
                 Write a comment
               </button>

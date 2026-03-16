@@ -33,6 +33,7 @@ export const App = () => {
 
   useEffect(() => {
     if (selectedUser) {
+      setError('');
       setPosts([]);
       setSelectedPost(null);
       setIsLoading(true);
@@ -81,7 +82,7 @@ export const App = () => {
                     No posts yet
                   </div>
                 )}
-                {selectedUser && posts.length > 0 && (
+                {selectedUser && posts.length > 0 && !error && (
                   <PostsList
                     posts={posts}
                     selectedPostId={selectedPost?.id}

@@ -48,7 +48,7 @@ export const UserSelector: React.FC<Props> = ({
         <button
           type="button"
           className="button"
-          aria-haspopup="false"
+          aria-haspopup="true"
           aria-controls="dropdown-menu"
           onClick={() => setIsVisibleUsers(prev => !prev)}
         >

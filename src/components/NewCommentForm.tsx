@@ -4,7 +4,7 @@ import { Comment } from '../types/Comment';
 
 type Props = {
   postId: number;
-  onSubmit: (newComment: Comment) => Promise<Comment>;
+  onSubmit: (newComment: Comment) => Promise<void>;
 };
 
 export const NewCommentForm: React.FC<Props> = ({ postId, onSubmit }) => {
@@ -175,7 +175,6 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onSubmit }) => {
           <button
             type="submit"
             className={cn('button', 'is-link', isLoading ? 'is-loading' : '')}
-            // onSubmit={e => handleFormSubmit(e)}
           >
             Add
           </button>
