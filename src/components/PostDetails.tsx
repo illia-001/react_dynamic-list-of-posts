@@ -10,14 +10,14 @@ type Props = {
 };
 
 export const PostDetails: React.FC<Props> = ({ post }) => {
-  const [isCommentsLoading, setisCommentsLoading] = useState(true);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [error, setError] = useState('');
   const { title, id: postId, body } = post;
 
   useEffect(() => {
-    setisCommentsLoading(true);
+    setIsCommentsLoading(true);
     setIsFormVisible(false);
 
     services
@@ -25,19 +25,24 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       .then(setComments)
       .catch(() => setError('Something went wrong'))
       .finally(() => {
-        setisCommentsLoading(false);
+        setIsCommentsLoading(false);
       });
   }, [postId]);
 
   function handleDeleteComment(commentId: number) {
     setComments(prev => prev.filter(comment => comment.id !== commentId));
-    services.deleteComment(commentId);
+    services.deleteComment(commentId).catch(() => {
+      setError('Unable to delete the comment!');
+    });
   }
 
   async function handleCreateComment(newComment: Comment) {
-    return services.createNewComment(newComment).then((data: Comment) => {
-      setComments(prev => [...prev, data]);
-    });
+    return services
+      .createNewComment(newComment)
+      .then((data: Comment) => {
+        setComments(prev => [...prev, data]);
+      })
+      .catch(() => setError('Unable to create the comment!'));
   }
 
   return (

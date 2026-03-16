@@ -27,8 +27,7 @@ export const App = () => {
       .then(setUsers)
       .catch(() => {
         setError('Something went wrong!');
-      })
-      .finally(() => {});
+      });
   }, []);
 
   useEffect(() => {

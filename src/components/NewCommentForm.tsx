@@ -39,9 +39,9 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onSubmit }) => {
       setIsLoading(true);
 
       const newComment: Comment = {
-        body,
-        email,
-        name,
+        body: normilizedBody,
+        email: normilizedEmail,
+        name: normilizedName,
         postId,
         id: 0,
       };
